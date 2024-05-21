@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState ,useMemo} from 'react';
 
 import MoviesList from './components/MoviesList';
 import './App.css';
@@ -66,22 +66,18 @@ useEffect(()=>{
   fetchMovieHandler();
 },[fetchMovieHandler])
 
-
-let content=<p>Found No Movies</p>;
-
-if(!isLoading && movies.length>0){
-  content = <MoviesList movies={movies} />
-}
-
-if(isLoading){
-  content=<p>Loading...</p>
-}
-
-
-if(error){
-    content = <p>{error}</p>
-}
- 
+const content = useMemo(() => {
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
+  if (error) {
+    return <p>{error}</p>;
+  }
+  if (movies.length > 0) {
+    return <MoviesList movies={movies} />;
+  }
+  return <p>Found No Movies</p>;
+}, [isLoading, error, movies]);
 
   return (
     <React.Fragment>
