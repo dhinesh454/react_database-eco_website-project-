@@ -61,10 +61,27 @@ function App() {
    }
   }
 
+
+  async function deleteMovieHandler(movieId) {
+    try {
+      const response = await fetch(`https://reactdatabases-default-rtdb.firebaseio.com/movies/${movieId}.json`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Could not delete movie.');
+      }
+
+      setMovies((prevMovies) => prevMovies.filter((movie) => movie.id !== movieId));
+    } catch (error) {
+      setError(error.message);
+    }
+  }
+
   let content = <p>Found no movies.</p>;
 
   if (movies.length > 0) {
-    content = <MoviesList movies={movies} />;
+    content = <MoviesList movies={movies} onclick={deleteMovieHandler} />;
   }
 
   if (error) {
@@ -78,7 +95,7 @@ function App() {
   return (
     <React.Fragment>
       <section>
-        <AddMovie onAddMovie={addMovieHandler} />
+        <AddMovie onAddMovie={addMovieHandler}/>
       </section>
       <section>
         <button onClick={fetchMoviesHandler}>Fetch Movies</button>
